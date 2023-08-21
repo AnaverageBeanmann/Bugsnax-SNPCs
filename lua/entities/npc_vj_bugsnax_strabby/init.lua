@@ -4,38 +4,6 @@ include("vj_base/ai/schedules.lua")
 include("vj_base/ai/move_aa.lua")
 include("shared.lua")
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-ENT.SoundTbl_Idle = {
-	"vj_bugsnax/flavor_falls/strabby/idle_1.wav",
-	"vj_bugsnax/flavor_falls/strabby/idle_2.wav",
-	"vj_bugsnax/flavor_falls/strabby/idle_3.wav",
-}
-ENT.SoundTbl_CombatIdle = {
-	"vj_bugsnax/flavor_falls/strabby/flee_1.wav",
-	"vj_bugsnax/flavor_falls/strabby/flee_2.wav",
-	"vj_bugsnax/flavor_falls/strabby/flee_3.wav",
-}
-ENT.SoundTbl_Alert = {
-	"vj_bugsnax/flavor_falls/strabby/alerted_1.wav",
-	"vj_bugsnax/flavor_falls/strabby/alerted_2.wav",
-	"vj_bugsnax/flavor_falls/strabby/alerted_3.wav",
-}
-ENT.SoundTbl_Pain = {
-	"vj_bugsnax/flavor_falls/strabby/alerted_1.wav",
-	"vj_bugsnax/flavor_falls/strabby/alerted_2.wav",
-	"vj_bugsnax/flavor_falls/strabby/alerted_3.wav",
-}
-ENT.SoundTbl_Impact = {
-	"vj_bugsnax/flavor_falls/strabby/pestered_1.wav",
-	"vj_bugsnax/flavor_falls/strabby/pestered_2.wav",
-	"vj_bugsnax/flavor_falls/strabby/pestered_3.wav",
-}
-ENT.SoundTbl_Death = {
-	"vj_bugsnax/flavor_falls/strabby/stunned_1.wav",
-	"vj_bugsnax/flavor_falls/strabby/stunned_2.wav",
-	"vj_bugsnax/flavor_falls/strabby/stunned_3.wav",
-}
-
 ENT.IdleSoundLevel = 70
 ENT.CombatIdleSoundLevel = 75
 ENT.AlertSoundLevel = 75
@@ -55,7 +23,48 @@ function ENT:Snak_CustomPreOnInitialize()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:Snak_CustomOnInitialize()
+
 	self:SetCollisionBounds(Vector(5,5,10),Vector(-5,-5,0))
+
+	self.SoundTbl_Idle = {
+		"vj_bugsnax/flavor_falls/strabby/idle_1.wav",
+		"vj_bugsnax/flavor_falls/strabby/idle_2.wav",
+		"vj_bugsnax/flavor_falls/strabby/idle_3.wav",
+	}
+	self.SoundTbl_CombatIdle = {
+		"vj_bugsnax/flavor_falls/strabby/flee_1.wav",
+		"vj_bugsnax/flavor_falls/strabby/flee_2.wav",
+		"vj_bugsnax/flavor_falls/strabby/flee_3.wav",
+	}
+	self.SoundTbl_Alert = {
+		"vj_bugsnax/flavor_falls/strabby/alerted_1.wav",
+		"vj_bugsnax/flavor_falls/strabby/alerted_2.wav",
+		"vj_bugsnax/flavor_falls/strabby/alerted_3.wav",
+	}
+	self.SoundTbl_Pain = {
+		"vj_bugsnax/flavor_falls/strabby/alerted_1.wav",
+		"vj_bugsnax/flavor_falls/strabby/alerted_2.wav",
+		"vj_bugsnax/flavor_falls/strabby/alerted_3.wav",
+	}
+	self.SoundTbl_Impact = {
+		"vj_bugsnax/flavor_falls/strabby/pestered_1.wav",
+		"vj_bugsnax/flavor_falls/strabby/pestered_2.wav",
+		"vj_bugsnax/flavor_falls/strabby/pestered_3.wav",
+	}
+	self.SoundTbl_Death = {
+		"vj_bugsnax/flavor_falls/strabby/stunned_1.wav",
+		"vj_bugsnax/flavor_falls/strabby/stunned_2.wav",
+		"vj_bugsnax/flavor_falls/strabby/stunned_3.wav",
+	}
+
+	self.SoundTbl_Burning = {
+		"vj_bugsnax/flavor_falls/strabby/on_fire_1.wav",
+		"vj_bugsnax/flavor_falls/strabby/on_fire_2.wav",
+		"vj_bugsnax/flavor_falls/strabby/on_fire_3.wav",
+	}
+
+	self.FootStepSoundLevel = 55
+	
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:Snak_Blink()
@@ -65,7 +74,7 @@ function ENT:Snak_Blink()
 	self:SetBodygroup(3,1)
 	self:SetBodygroup(4,1)
 
-	timer.Simple(math.random(0.15,0.25),function() if IsValid(self) then
+	timer.Simple(math.random(0.15,0.20),function() if IsValid(self) then
 		self:SetBodygroup(1,0)
 		self:SetBodygroup(2,0)
 		self:SetBodygroup(3,0)

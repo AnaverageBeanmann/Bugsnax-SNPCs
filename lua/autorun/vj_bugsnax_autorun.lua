@@ -123,37 +123,61 @@ if VJExists == true then
 		VJ.AddNPC("Tikkada Masala","npc_vj_bugsnax_tikkada",vCat)
 		*/
 
-
+	
 	local AddConvars = {}
 
-	AddConvars["VJ_Bugsnax_Targetable"] = 1
-
+	AddConvars["VJ_Bugsnax_Targetable"] = 3
+	
 	for k, v in pairs(AddConvars) do
 		if !ConVarExists( k ) then CreateConVar( k, v, {FCVAR_ARCHIVE} ) end
 	end
-
+	
 	if (CLIENT) then
 		local function VJ_Bugsnax(Panel)
 			if !game.SinglePlayer() then
-			if !LocalPlayer():IsAdmin() or !LocalPlayer():IsSuperAdmin() then
-				Panel:AddControl( "Label", {Text = "You are not an admin!"})
-				Panel:ControlHelp("Note: Only admins can change these settings!")
-			return
+				if !LocalPlayer():IsAdmin() or !LocalPlayer():IsSuperAdmin() then
+					Panel:AddControl( "Label", {Text = "You are not an admin!"})
+					Panel:ControlHelp("Note: Only admins can change these settings!")
+					return
+				end
+			end
+			Panel:AddControl( "Label", {Text = "Note: Only admins can change these settings!"})
+			local vj_resetbutton = {Options = {}, CVars = {}, Label = "Reset Everything:", MenuButton = "0"}
+			vj_resetbutton.Options["#vjbase.menugeneral.default"] = {
+				VJ_Bugsnax_Targetable = "1",
+			}
+	
+			/*
+			examples
+			
+			Panel:AddControl("Checkbox", {Label = "", Command = ""})
+			
+			Panel:AddControl("Slider", {Label = "", Command = "", Min = 1, Max = 10000})
+
+			local example_combobox = {Options = {}, CVars = {}, Label = "", MenuButton = "0"}
+			example_combobox.Options["Default"] = {convar_name = 1}
+			example_combobox.Options["Option 1"] = {convar_name = 2}
+			example_combobox.Options["Option 2"] = {convar_name = 3}
+			Panel:AddControl("ComboBox", example_combobox)
+			
+			Panel:ControlHelp("")
+			
+			Panel:AddControl( "Label", {Text = "Note: Only admins can change these settings!"})
+			*/
+			
+			Panel:AddControl("ComboBox", vj_resetbutton)
+
+			Panel:AddControl("Checkbox", {Label ="Targetale Bugsnax?", Command ="VJ_Bugsnax_Targetable"})
+			Panel:ControlHelp("If enabled, other npcs can target and attack Bugsnax.")
+
 		end
-	end
 
-	local vj_resetbutton = {Options = {}, CVars = {}, Label = "Reset Everything:", MenuButton = "0"}
-	vj_resetbutton.Options["#vjbase.menugeneral.default"] = {
-		VJ_Bugsnax_Targetable = "1",
-	}
+		function VJ_AddToMenu_Bugsnax(Panel)
+			spawnmenu.AddToolMenuOption("DrVrej","SNPC Configures","Bugsnax","Bugsnax","","", VJ_Bugsnax, {} )
+		end
 
-	Panel:AddControl("Checkbox", {Label = "Targetable Bugsnax?", Command = "VJ_Bugsnax_Targetable"})
-	Panel:ControlHelp("If enabled, other npcs will be able to target and attack Bugsnax.")
-
-	function VJ_AddToMenu_Bugsnax(Panel)
-		spawnmenu.AddToolMenuOption("DrVrej","SNPC Configures","Bugsnax","Bugsnax","","", VJ_Bugsnax, {} )
-	end
 		hook.Add("PopulateToolMenu","VJ_AddToMenu_Bugsnax", VJ_AddToMenu_Bugsnax )
+
 	end
 
 -- !!!!!! DON'T TOUCH ANYTHING BELOW THIS !!!!!! -------------------------------------------------------------------------------------------------------------------------
