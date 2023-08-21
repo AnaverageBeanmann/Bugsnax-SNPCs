@@ -4,9 +4,6 @@ include("vj_base/ai/schedules.lua")
 include("vj_base/ai/move_aa.lua")
 include("shared.lua")
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-ENT.Model = {"models/vj_bugsnax/strabby.mdl"}
-ENT.StartHealth = 15
-ENT.HullType = HULL_TINY
 ENT.SightDistance = 300
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ENT.CanOpenDoors = false
@@ -189,11 +186,14 @@ function ENT:CustomOnFootStepSound()
 
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomPreOnInitialize()
-	self:Snak_CustomPreOnInitialize()
+function ENT:CustomOnPreInitialize()
+	self:Snak_CustomOnPreInitialize()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:Snak_CustomPreOnInitialize()
+function ENT:Snak_CustomOnPreInitialize()
+	self.Model = {"models/vj_bugsnax/strabby.mdl"}
+	self.StartHealth = 15
+	self.HullType = HULL_TINY
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
@@ -381,6 +381,10 @@ function ENT:CustomOnThink()
 				end
 				self:ResetEnemy(true)
 			end
+			if self:GetClass() == "npc_vj_bugsnax_strabby_sprout" && self.IsFollowing then
+				self.IsFollowing = false
+				self:FollowReset()
+			end
 		end
 		if self.Bugsnax_NextBurnPanicTime < CurTime() && !self.Dead then
 			VJ_EmitSound(self,self.SoundTbl_Burning,self.CombatIdleSoundLevel,self:VJ_DecideSoundPitch(self.CombatIdleSoundPitch.a,self.CombatIdleSoundPitch.b))
@@ -424,7 +428,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnTouch(ent)
 
-	if !self.Bugsnax_WeRanTouchStuffAlready then
+	if !self.Bugsnax_WeRanTouchStuffAlready && self:GetClass() != "npc_vj_bugsnax_strabby_sprout" then
 
 		if ent:IsPlayer() then
 
