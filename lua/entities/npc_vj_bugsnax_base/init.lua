@@ -183,8 +183,10 @@ ENT.SoundTbl_Death = {
 	"vj_bugsnax/flavor_falls/strabby/stunned_3.wav",
 }
 
-ENT.NextSoundTime_Idle = VJ.SET(4,7)
+ENT.SoundTbl_FootStep = {""} -- this is only here because the footstep stuff won't work if it isn't
 
+ENT.NextSoundTime_Idle = VJ.SET(4,7)
+ENT.DisableFootStepSoundTimer = true
 ENT.GeneralSoundPitch1 = 100
 ENT.GeneralSoundPitch2 = 100
 ---------------------------------------------------------------------------------------------------------------------------------------------

@@ -36,6 +36,13 @@ ENT.SoundTbl_Death = {
 	"vj_bugsnax/flavor_falls/strabby/stunned_3.wav",
 }
 
+ENT.IdleSoundLevel = 70
+ENT.CombatIdleSoundLevel = 75
+ENT.AlertSoundLevel = 75
+ENT.PainSoundLevel = 75
+ENT.ImpactSoundLevel = 75
+ENT.DeathSoundLevel = 75
+
 ENT.NextSoundTime_Idle = VJ.SET(4,7)
 
 ENT.GeneralSoundPitch1 = 100

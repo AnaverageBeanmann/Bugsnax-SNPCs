@@ -17,7 +17,7 @@ if VJExists == true then
 	include('autorun/vj_controls.lua')
 
 	local vCat = "Bugsnax"
-	-- VJ.AddCategoryInfo(vCat,{Icon = "icons/icon_bugsnax.png"})
+	VJ.AddCategoryInfo(vCat,{Icon = "icons/vj_bugsnax_strabbyicon.png"})
 	
 	VJ.AddNPC("Base Snak","npc_vj_bugsnax_base",vCat)
 
@@ -29,8 +29,8 @@ if VJExists == true then
 		VJ.AddNPC("Ruby Peelbug","npc_vj_bugsnax_peelbug_ruby",vCat)
 		VJ.AddNPC("Rootle","npc_vj_bugsnax_rootle",vCat)
 		VJ.AddNPC("White Rootle","npc_vj_bugsnax_rootle_white",vCat)
-		VJ.AddNPC("Sandopede","npc_vj_bugsnax_charmallow",vCat)
-		VJ.AddNPC("Sub Sandopede","npc_vj_bugsnax_charmallow_cold",vCat)
+		VJ.AddNPC("Sandopede","npc_vj_bugsnax_sandopede",vCat)
+		VJ.AddNPC("Sub Sandopede","npc_vj_bugsnax_sandopede_sub",vCat)
 		VJ.AddNPC("Inchwrap","npc_vj_bugsnax_inch",vCat)
 		*/
 
@@ -122,6 +122,39 @@ if VJExists == true then
 		VJ.AddNPC("Spaghider","npc_vj_bugsnax_spaghider",vCat)
 		VJ.AddNPC("Tikkada Masala","npc_vj_bugsnax_tikkada",vCat)
 		*/
+
+
+	local AddConvars = {}
+
+	AddConvars["VJ_Bugsnax_Targetable"] = 1
+
+	for k, v in pairs(AddConvars) do
+		if !ConVarExists( k ) then CreateConVar( k, v, {FCVAR_ARCHIVE} ) end
+	end
+
+	if (CLIENT) then
+		local function VJ_Bugsnax(Panel)
+			if !game.SinglePlayer() then
+			if !LocalPlayer():IsAdmin() or !LocalPlayer():IsSuperAdmin() then
+				Panel:AddControl( "Label", {Text = "You are not an admin!"})
+				Panel:ControlHelp("Note: Only admins can change these settings!")
+			return
+		end
+	end
+
+	local vj_resetbutton = {Options = {}, CVars = {}, Label = "Reset Everything:", MenuButton = "0"}
+	vj_resetbutton.Options["#vjbase.menugeneral.default"] = {
+		VJ_Bugsnax_Targetable = "1",
+	}
+
+	Panel:AddControl("Checkbox", {Label = "Targetable Bugsnax?", Command = "VJ_Bugsnax_Targetable"})
+	Panel:ControlHelp("If enabled, other npcs will be able to target and attack Bugsnax.")
+
+	function VJ_AddToMenu_Bugsnax(Panel)
+		spawnmenu.AddToolMenuOption("DrVrej","SNPC Configures","Bugsnax","Bugsnax","","", VJ_Bugsnax, {} )
+	end
+		hook.Add("PopulateToolMenu","VJ_AddToMenu_Bugsnax", VJ_AddToMenu_Bugsnax )
+	end
 
 -- !!!!!! DON'T TOUCH ANYTHING BELOW THIS !!!!!! -------------------------------------------------------------------------------------------------------------------------
 	AddCSLuaFile(AutorunFile)
