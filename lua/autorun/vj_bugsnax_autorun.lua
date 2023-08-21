@@ -35,9 +35,9 @@ if VJExists == true then
 		*/
 
 	-- Garden Grove
-		/*
-		VJ.AddNPC("Crispy Snakpod","npc_vj_bugsnax_snakpod",vCat)
+		-- VJ.AddNPC("Crispy Snakpod","npc_vj_bugsnax_snakpod",vCat)
 		VJ.AddNPC("White Strabby","npc_vj_bugsnax_strabby_white",vCat)
+		/*
 		VJ.AddNPC("Weenyworm","npc_vj_bugsnax_weenyworm",vCat)
 		VJ.AddNPC("Shiskabug","npc_vj_bugsnax_shiskabug",vCat)
 		VJ.AddNPC("Fryder","npc_vj_bugsnax_fryder",vCat)
@@ -126,7 +126,8 @@ if VJExists == true then
 	
 	local AddConvars = {}
 
-	AddConvars["VJ_Bugsnax_Targetable"] = 3
+	AddConvars["VJ_Bugsnax_Targetable"] = 1
+	AddConvars["VJ_Bugsnax_Evil"] = 0
 	
 	for k, v in pairs(AddConvars) do
 		if !ConVarExists( k ) then CreateConVar( k, v, {FCVAR_ARCHIVE} ) end
@@ -145,6 +146,7 @@ if VJExists == true then
 			local vj_resetbutton = {Options = {}, CVars = {}, Label = "Reset Everything:", MenuButton = "0"}
 			vj_resetbutton.Options["#vjbase.menugeneral.default"] = {
 				VJ_Bugsnax_Targetable = "1",
+				VJ_Bugsnax_Evil = "0",
 			}
 	
 			/*
@@ -169,6 +171,9 @@ if VJExists == true then
 
 			Panel:AddControl("Checkbox", {Label ="Targetale Bugsnax?", Command ="VJ_Bugsnax_Targetable"})
 			Panel:ControlHelp("If enabled, other npcs can target and attack Bugsnax.")
+
+			Panel:AddControl("Checkbox", {Label ="Evil Bugsnax?", Command ="VJ_Bugsnax_Targetable"})
+			Panel:ControlHelp("If enabled, all Bugsnax are evil and will actively attack everything.")
 
 		end
 

@@ -64,7 +64,11 @@ function ENT:Snak_CustomOnInitialize()
 	}
 
 	self.FootStepSoundLevel = 55
-	
+
+	if self:GetClass() == "npc_vj_bugsnax_strabby_white" then
+		self:SetSkin(2)
+	end
+
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:Snak_Blink()
