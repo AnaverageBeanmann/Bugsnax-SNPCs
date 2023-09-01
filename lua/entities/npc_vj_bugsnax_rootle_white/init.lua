@@ -9,7 +9,7 @@ include("shared.lua")
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:Snak_NomCloud()
 
-	local CloudCol = Color(255,209,209) -- change depending on color of snak
+	local CloudCol = Color(255,248,234) -- change depending on color of snak
 	
 	-- leave this stuff as-is, maybe make the cloud bigger if needed but that's it
 	local effectBlood = EffectData()

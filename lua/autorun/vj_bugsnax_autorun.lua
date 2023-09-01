@@ -16,6 +16,14 @@ if VJExists == true then
 
 	include('autorun/vj_controls.lua')
 
+	VJ.AddParticle(
+		"particles/bugsnax_particles.pcf",
+		{
+			"conc_trail",
+			"stunned_stars",
+		}
+	)
+
 	local vCat = "Bugsnax"
 	VJ.AddCategoryInfo(vCat,{Icon = "icons/vj_bugsnax_strabbyicon.png"})
 	
@@ -26,8 +34,8 @@ if VJExists == true then
 		-- VJ.AddNPC("Twisty Snakpod","npc_vj_bugsnax_snakpod_twisty",vCat)
 		VJ.AddNPC("Strabby","npc_vj_bugsnax_strabby",vCat)
 		-- VJ.AddNPC("Ruby Peelbug","npc_vj_bugsnax_peelbug_ruby",vCat)
-		-- VJ.AddNPC("Rootle","npc_vj_bugsnax_rootle",vCat)
-		-- VJ.AddNPC("White Rootle","npc_vj_bugsnax_rootle_white",vCat)
+		VJ.AddNPC("Rootle","npc_vj_bugsnax_rootle",vCat)
+		VJ.AddNPC("White Rootle","npc_vj_bugsnax_rootle_white",vCat)
 		-- VJ.AddNPC("Sandopede","npc_vj_bugsnax_sandopede",vCat)
 		-- VJ.AddNPC("Sub Sandopede","npc_vj_bugsnax_sandopede_sub",vCat)
 		-- VJ.AddNPC("Inchwrap","npc_vj_bugsnax_inch",vCat)
@@ -35,7 +43,7 @@ if VJExists == true then
 	-- Garden Grove
 		-- VJ.AddNPC("Crispy Snakpod","npc_vj_bugsnax_snakpod",vCat)
 		VJ.AddNPC("White Strabby","npc_vj_bugsnax_strabby_white",vCat)
-		-- VJ.AddNPC("Weenyworm","npc_vj_bugsnax_weenyworm",vCat)
+		VJ.AddNPC("Weenyworm","npc_vj_bugsnax_weenyworm",vCat)
 		-- VJ.AddNPC("Shiskabug","npc_vj_bugsnax_shiskabug",vCat)
 		-- VJ.AddNPC("Fryder","npc_vj_bugsnax_fryder",vCat)
 		-- VJ.AddNPC("Bunger","npc_vj_bugsnax_bunger",vCat)
@@ -54,7 +62,7 @@ if VJExists == true then
 
 	-- Scorched Gorge
 		-- VJ.AddNPC("Puffy Snakpod","npc_vj_bugsnax_snakpod_puffy",vCat)
-		-- VJ.AddNPC("Shy Weenyworm","npc_vj_bugsnax_weenyworm_shy",vCat)
+		VJ.AddNPC("Shy Weenyworm","npc_vj_bugsnax_weenyworm_shy",vCat)
 		-- VJ.AddNPC("Sweet Fryder","npc_vj_bugsnax_fryder_sweet",vCat)
 		-- VJ.AddNPC("Green Peelbug","npc_vj_bugsnax_peelbug",vCat)
 		-- VJ.AddNPC("BBQ Bunger","npc_vj_bugsnax_bunger_bbq",vCat)

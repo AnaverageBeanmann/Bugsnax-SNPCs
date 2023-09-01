@@ -1,7 +1,10 @@
 AddCSLuaFile("shared.lua")
+/*
+re-enable these for revamp update
 include("vj_base/ai/core.lua")
 include("vj_base/ai/schedules.lua")
 include("vj_base/ai/move_aa.lua")
+*/
 include("shared.lua")
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ENT.IdleSoundLevel = 70
@@ -10,14 +13,13 @@ ENT.AlertSoundLevel = 75
 ENT.PainSoundLevel = 75
 ENT.ImpactSoundLevel = 75
 ENT.DeathSoundLevel = 75
-
-ENT.NextSoundTime_Idle = VJ.SET(4,7)
-
-ENT.GeneralSoundPitch1 = 100
-ENT.GeneralSoundPitch2 = 100
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:Snak_CustomOnPreInitialize()
-	self.Model = {"models/vj_bugsnax/strabby.mdl"}
+	if self:GetClass() == "npc_vj_bugsnax_strabby_razzby" or self:GetClass() == "npc_vj_bugsnax_strabby_razzby_black" then
+		self.Model = {"models/vj_bugsnax/razzby.mdl"}
+	else
+		self.Model = {"models/vj_bugsnax/strabby.mdl"}
+	end
 	self.StartHealth = 15
 	self.HullType = HULL_TINY
 end
@@ -63,6 +65,13 @@ function ENT:Snak_CustomOnInitialize()
 			"vj_bugsnax/simmering_springs/razzby/on_fire_2.wav",
 			"vj_bugsnax/simmering_springs/razzby/on_fire_3.wav",
 		}
+
+		self.SoundTbl_Stunned = {
+			"vj_bugsnax/simmering_springs/razzby/stunned_1.wav",
+			"vj_bugsnax/simmering_springs/razzby/stunned_2.wav",
+			"vj_bugsnax/simmering_springs/razzby/stunned_3.wav",
+		}
+
 	else
 		self.SoundTbl_Idle = {
 			"vj_bugsnax/flavor_falls/strabby/idle_1.wav",
@@ -100,6 +109,13 @@ function ENT:Snak_CustomOnInitialize()
 			"vj_bugsnax/flavor_falls/strabby/on_fire_2.wav",
 			"vj_bugsnax/flavor_falls/strabby/on_fire_3.wav",
 		}
+
+		self.SoundTbl_Stunned = {
+			"vj_bugsnax/flavor_falls/strabby/stunned_1.wav",
+			"vj_bugsnax/flavor_falls/strabby/stunned_2.wav",
+			"vj_bugsnax/flavor_falls/strabby/stunned_3.wav",
+		}
+
 	end
 
 	self.FootStepSoundLevel = 55
@@ -147,7 +163,7 @@ function ENT:Snak_Blink()
 	self:SetBodygroup(3,1)
 	self:SetBodygroup(4,1)
 
-	timer.Simple(math.random(0.15,0.20),function() if IsValid(self) then
+	timer.Simple(0.15,function() if IsValid(self) then
 		self:SetBodygroup(1,0)
 		self:SetBodygroup(2,0)
 		self:SetBodygroup(3,0)

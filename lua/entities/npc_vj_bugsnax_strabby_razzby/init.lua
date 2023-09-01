@@ -1,14 +1,11 @@
 AddCSLuaFile("shared.lua")
+/*
+re-enable these for revamp update
 include("vj_base/ai/core.lua")
 include("vj_base/ai/schedules.lua")
 include("vj_base/ai/move_aa.lua")
+*/
 include("shared.lua")
----------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:Snak_CustomOnPreInitialize()
-	self.Model = {"models/vj_bugsnax/razzby.mdl"}
-	self.StartHealth = 15
-	self.HullType = HULL_TINY
-end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:Snak_NomCloud()
 

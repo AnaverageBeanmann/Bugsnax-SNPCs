@@ -1,7 +1,10 @@
 AddCSLuaFile("shared.lua")
+/*
+re-enable these for revamp update
 include("vj_base/ai/core.lua")
 include("vj_base/ai/schedules.lua")
 include("vj_base/ai/move_aa.lua")
+*/
 include("shared.lua")
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ENT.SightDistance = 300
@@ -26,6 +29,15 @@ ENT.Bugsnax_PassiveState = 0
 -- 2 = Alerted and target got near
 ENT.Bugsnax_Burning = false
 ENT.Bugsnax_NextBurnPanicTime = 0
+ENT.Bugsnax_CanStopandStare = false
+ENT.Bugsnax_StopandStare_Nerve = 0
+ENT.Bugsnax_CanBeEaten = true
+ENT.Bugsnax_Size = 0
+-- 0 = Small
+-- 1 = Big
+ENT.Bugsnax_StunHealth = 0
+ENT.Bugsnax_Stunned = false
+ENT.Bugsnax_StunTime = 0
 
 ENT.FootSteps = {
 	[MAT_ANTLION] = {
@@ -157,7 +169,7 @@ ENT.FootSteps = {
 
 ENT.SoundTbl_FootStep = {""} -- this is only here because the footstep stuff won't work if it isn't
 
-ENT.NextSoundTime_Idle = VJ.SET(4,7)
+ENT.NextSoundTime_Idle = VJ_Set(4,7) -- change to VJ.SET after overhaul update
 ENT.DisableFootStepSoundTimer = true
 ENT.GeneralSoundPitch1 = 100
 ENT.GeneralSoundPitch2 = 100
@@ -187,6 +199,15 @@ function ENT:CustomOnFootStepSound()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnPreInitialize()
+	if
+		self:GetClass() == "npc_vj_bugsnax_strabby" or
+		self:GetClass() == "npc_vj_bugsnax_strabby_white" or
+		self:GetClass() == "npc_vj_bugsnax_strabby_razzby" or
+		self:GetClass() == "npc_vj_bugsnax_strabby_razzby_black" or
+		self:GetClass() == "npc_vj_bugsnax_strabby_sprout"
+	then
+		self.Bugsnax_CanStopandStare = true
+	end
 	self:Snak_CustomOnPreInitialize()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -199,6 +220,7 @@ end
 function ENT:CustomOnInitialize()
 	self.Bugsnax_NextBlinkTime = CurTime() + math.random(3,7)
 	self.Bleeds = false
+	self.Bugsnax_StunHealth = self.StartHealth * 0.30
 	self:Snak_CustomOnInitialize()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -326,9 +348,20 @@ function ENT:Snak_CustomOnInitialize()
 
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
+-- function ENT:GetSightDirection()
+	-- return self:GetAttachment(self:LookupAttachment("eyes")).Ang:Forward() -- Attachment example
+-- end
+---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "step" then
 		self:FootStepSoundCode()
+	end
+	if key == "rootle_drag" then
+		VJ_EmitSound(self,"npc/zombie/foot_slide"..math.random(1,3)..".wav",70,100)
+	end
+	if key == "rootle_burrow" then
+	end
+	if key == "rootle_unburrow" then
 	end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -347,7 +380,7 @@ function ENT:CustomOnThink()
 	end
 
 	-- if we're stopping and staring, alerted with a valid enemy, not dead, and not being controlled, then..
-	if self.Alerted && self.Dead == false && self:GetEnemy() != nil && self.VJ_IsBeingControlled == false && self.Bugsnax_PassiveState == 1 then
+	if self.Bugsnax_CanStopandStare && self.Alerted && self.Dead == false && self:GetEnemy() != nil && self.VJ_IsBeingControlled == false && self.Bugsnax_PassiveState == 1 then
 		local enemydist = self:GetPos():Distance(self:GetEnemy():GetPos()) -- distance check
 		if enemydist <= 200 then -- if they're closer or equal to 200 units then..
 			self.Bugsnax_PassiveState = 2 -- run away!
@@ -410,7 +443,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAlert(ent)
 	-- if we're not dead, have a valid enemy, and not being controlled, then..
-	if self.Dead == false && self:GetEnemy() != nil && self.VJ_IsBeingControlled == false then
+	if self.Bugsnax_CanStopandStare && self.Dead == false && self:GetEnemy() != nil && self.VJ_IsBeingControlled == false then
 		local enemydist = self:GetPos():Distance(self:GetEnemy():GetPos()) -- distance check
 		if self.Bugsnax_PassiveState == 0 then
 			if enemydist >= 250 then -- if they're farther or equal to 250 units then..
@@ -428,7 +461,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnTouch(ent)
 
-	if !self.Bugsnax_WeRanTouchStuffAlready && self:GetClass() != "npc_vj_bugsnax_strabby_sprout" then
+	if !self.Bugsnax_WeRanTouchStuffAlready && self.Bugsnax_CanBeEaten && (self.Bugsnax_Size == 0 or self.Bugsnax_Size == 1 && self.Bugsnax_Stunned) && self:GetClass() != "npc_vj_bugsnax_strabby_sprout" then
 
 		if ent:IsPlayer() then
 
@@ -439,7 +472,7 @@ function ENT:CustomOnTouch(ent)
 
 			VJ_EmitSound(ent,"vo/sandwicheat09.mp3",70,math.random(95,105))
 
-			ent:SetHealth(ent:Health() +15)
+			ent:SetHealth(ent:Health() +self:Health())
 
 			self:Snak_NomCloud()
 
@@ -468,6 +501,76 @@ function ENT:Snak_NomCloud()
 
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
+function ENT:CustomOnTakeDamage_AfterDamage(dmginfo, hitgroup)
+
+	if
+		(
+			dmginfo:IsBulletDamage() or
+			dmginfo:IsDamageType(DMG_BUCKSHOT) or
+			dmginfo:IsDamageType(DMG_SNIPER) or
+			dmginfo:IsDamageType(DMG_AIRBOAT) or
+			dmginfo:IsDamageType(DMG_CLUB) or
+			dmginfo:IsDamageType(DMG_SLASH) or
+			dmginfo:IsDamageType(DMG_GENERIC) or
+			dmginfo:IsDamageType(DMG_SONIC) or
+			dmginfo:IsDamageType(DMG_VEHICLE) or
+			dmginfo:IsDamageType(DMG_NEVERGIB) or
+			dmginfo:IsDamageType(DMG_PHYSGUN) or
+			dmginfo:IsDamageType(DMG_CRUSH)
+		)
+	then
+		self.Bugsnax_StunHealth = self.Bugsnax_StunHealth -dmginfo:GetDamage() -- lose stunhealth
+	end
+
+
+	if
+		(
+			self.Bugsnax_StunHealth <= 0
+		or
+			(
+				dmginfo:IsExplosionDamage() or
+				dmginfo:IsDamageType(DMG_BLAST_SURFACE) or
+				dmginfo:IsDamageType(DMG_MISSILEDEFENSE) or
+				dmginfo:IsDamageType(DMG_ALWAYSGIB)
+			)
+		)
+		&& !self.Bugsnax_Stunned
+	then -- if we're not stunned and we're out of stun health..
+
+		-- become stunned
+		self.Bugsnax_Stunned = true
+		self.Bugsnax_StunHealth = self.StartHealth * 0.30
+		self:VJ_ACT_PLAYACTIVITY(ACT_IDLE_HURT,true,5,false)
+		self.AnimTbl_IdleStand = {ACT_IDLE_HURT}
+		self.MovementType = VJ_MOVETYPE_STATIONARY
+		self.DisableFindEnemy = true
+		self:ResetEnemy(true)
+		self.SoundTbl_BackupIdle = self.SoundTbl_Idle
+		self.SoundTbl_Idle = self.SoundTbl_Stunned
+		self.SoundTbl_Breath = {"vj_bugsnax/sfx/BugStunned.mp3"}
+		self.BreathSoundLevel = 70
+		self.NextSoundTime_Breath = VJ_Set(2.5,2.5) -- change to VJ.SET after revamp update
+		self.NextBreathSoundT = 0
+
+		ParticleEffectAttach("stunned_stars",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("stunned"))
+
+		self.Bugsnax_StunTime = CurTime() + 5
+			-- VJ_EmitSound(self,"vo/sandwicheat09.mp3",70,math.random(95,105))
+
+		timer.Simple(math.random(5,10),function() if IsValid(self) then
+			self.Bugsnax_Stunned = false
+			self.AnimTbl_IdleStand = {ACT_IDLE}
+			self.MovementType = VJ_MOVETYPE_GROUND
+			self.DisableFindEnemy = false
+			self.SoundTbl_Idle = self.SoundTbl_BackupIdle
+			self.SoundTbl_Breath = {""}
+			self.NextBreathSoundT = 0
+			self:StopParticles()
+		end end)
+
+	end
+end
+---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnPriorToKilled(dmginfo, hitgroup)
 	if self:IsOnFire() then
 		self.SoundTbl_Death = {self.SoundTbl_Burning}
@@ -478,7 +581,7 @@ function ENT:CustomOnDeath_BeforeCorpseSpawned(dmginfo, hitgroup)
 	self:Snak_NomCloud()
 	VJ_EmitSound(self,"physics/body/body_medium_break"..math.random(2,4)..".wav",80,math.random(95,105))
 	VJ_EmitSound(self,"physics/flesh/flesh_squishy_impact_hard"..math.random(1,4)..".wav",80,math.random(95,105))
-	VJ.STOPSOUND(self.CurrentDeathSound)
+	VJ_STOPSOUND(self.CurrentDeathSound) -- change to VJ.STOPSOUND after revamp update
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:SetUpGibesOnDeath(dmginfo,hitgroup)
